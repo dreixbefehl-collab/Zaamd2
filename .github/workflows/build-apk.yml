@@ -8,8 +8,6 @@ on:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
       - name: Checkout
@@ -25,29 +23,29 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          cache: true
 
-      - name: Unpack Z_Armed source
+      - name: Unpack Zaamd
         run: |
-          mkdir zaamd_src
-          unzip -o Zaamd_Clean_Rebuild.zip -d zaamd_src
+          rm -rf zaamd_src zaamd_source
+          mkdir zaamd_source
+          unzip -o Zaamd_Clean_Rebuild.zip -d zaamd_source
 
-      - name: Generate Android project
-        working-directory: zaamd_src
-        run: flutter create . --platforms=android --project-name=zaamd --org=com.zaamd
+      - name: Create Android project
+        run: flutter create zaamd_src --platforms=android --project-name=zaamd --org=com.zaamd
 
-      - name: Get packages
-        working-directory: zaamd_src
-        run: flutter pub get
+      - name: Put Zaamd code back
+        run: |
+          cp zaamd_source/pubspec.yaml zaamd_src/pubspec.yaml
+          cp zaamd_source/lib/main.dart zaamd_src/lib/main.dart
 
-      - name: Build debug APK
+      - name: Build APK
         working-directory: zaamd_src
-        run: flutter build apk --debug
+        run: |
+          flutter pub get
+          flutter build apk --debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Zaamd-Android-debug
           path: zaamd_src/build/app/outputs/flutter-apk/app-debug.apk
-          if-no-files-found: error
-          retention-days: 14
