@@ -30,7 +30,7 @@ jobs:
       - name: Unpack Z_Armed source
         run: |
           mkdir zaamd_src
-          unzip -o Zaamd_Source_Small.zip -d zaamd_src
+          unzip -o Zaamd_Clean_Rebuild.zip -d zaamd_src
 
       - name: Generate Android project
         working-directory: zaamd_src
