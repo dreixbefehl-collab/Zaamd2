@@ -1,0 +1,53 @@
+name: Build Zaamd APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Unpack Z_Armed source
+        run: |
+          mkdir zaamd_src
+          unzip -o Zaamd_Source_Small.zip -d zaamd_src
+
+      - name: Generate Android project
+        working-directory: zaamd_src
+        run: flutter create . --platforms=android --project-name=zaamd --org=com.zaamd
+
+      - name: Get packages
+        working-directory: zaamd_src
+        run: flutter pub get
+
+      - name: Build debug APK
+        working-directory: zaamd_src
+        run: flutter build apk --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Zaamd-Android-debug
+          path: zaamd_src/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
