@@ -35,8 +35,8 @@ jobs:
 
       - name: Put Zaamd code back
         run: |
-          cp zaamd_source/pubspec.yaml zaamd_src/pubspec.yaml
-          cp zaamd_source/lib/main.dart zaamd_src/lib/main.dart
+          cp zaamd_source/Zaamd_Clean_Rebuild/pubspec.yaml zaamd_src/pubspec.yaml
+          cp zaamd_source/Zaamd_Clean_Rebuild/lib/main.dart zaamd_src/lib/main.dart
 
       - name: Build APK
         working-directory: zaamd_src
