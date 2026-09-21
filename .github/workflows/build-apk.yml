@@ -27,7 +27,7 @@ jobs:
           cache: true
 
       - name: Create Flutter Android files
-        run: flutter create --platforms=android .
+        run: flutter create --platforms=android --project-name zaamd2 .
 
       - name: Get dependencies
         run: flutter pub get
