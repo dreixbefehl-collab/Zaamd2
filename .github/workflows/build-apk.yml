@@ -26,7 +26,13 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Create Flutter Android files
+      - name: Unzip game source
+        run: |
+          unzip -o Zaamd_Clean_Rebuild.zip -d game
+          cp -r game/* .
+          rm -rf game
+
+      - name: Create Android files
         run: flutter create --platforms=android --project-name zaamd2 .
 
       - name: Get dependencies
