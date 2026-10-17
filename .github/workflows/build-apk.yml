@@ -35,9 +35,6 @@ jobs:
       - name: Create Android files
         run: flutter create --platforms=android --org com.dreixbefehl --project-name zaamd .
 
-      - name: Pin shared_preferences_android
-        run: flutter pub add shared_preferences_android:2.4.29
-
       - name: Get dependencies
         run: flutter pub get
 
