@@ -39,7 +39,22 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --build-number=${{ github.run_number }}
+
+      - name: Sign APK
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ZAAMD_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ZAAMD_KEYSTORE_PASSWORD }}
+        run: |
+          set -e
+          umask 077
+          KEYSTORE="$RUNNER_TEMP/zaamd-release.p12"
+          trap 'rm -f "$KEYSTORE"' EXIT
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$KEYSTORE"
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)
+          APK=build/app/outputs/flutter-apk/app-release.apk
+          "$APKSIGNER" sign --ks "$KEYSTORE" --ks-type PKCS12 --ks-key-alias zaamd --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD "$APK"
+          "$APKSIGNER" verify --verbose "$APK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
